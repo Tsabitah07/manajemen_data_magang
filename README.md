@@ -1,130 +1,133 @@
 # RuangMagang
 
-RuangMagang adalah proyek platform informasi dan manajemen magang kampus yang ditujukan untuk membantu mahasiswa menemukan peluang magang serta membantu divisi kampus mengelola proses rekrutmen. Repository ini berisi frontend Vue dan backend API Go.
-
-[//]: # (> **Status saat ini:** yang sudah dapat dicoba adalah landing page responsif berbahasa Indonesia. Login, pendaftaran akun, lowongan, dashboard, dan proses seleksi masih berupa rencana produk atau belum terhubung ke backend.)
+RuangMagang adalah platform manajemen magang internal kampus yang menghubungkan mahasiswa dengan divisi/organisasi kampus. Aplikasi menyediakan publikasi lowongan, pendaftaran, seleksi, profil pengguna, dashboard berdasarkan peran, serta notifikasi status.
 
 ## Teknologi
 
 | Bagian | Teknologi |
 | --- | --- |
-| Frontend | Vue 3, TypeScript, Vite |
-| Routing | Vue Router |
-| State management | Pinia |
-| Styling | Tailwind CSS dan CSS |
-| Backend | Go, Gin |
-| Konfigurasi backend | godotenv |
+| Frontend | Vue 3, TypeScript, Vite, Pinia, Vue Router, Axios |
+| Backend | PHP 8.2+, Laravel, Eloquent ORM |
+| Database | MySQL 8 |
+| Autentikasi | JWT (`php-open-source-saver/jwt-auth`) dan bcrypt |
 
-
-## Menjalankan frontend secara lokal
+## Menjalankan aplikasi
 
 ### Prasyarat
 
-- Node.js `22.18+` atau `24.12+`
-- npm
+- Node.js `22.18+` atau `24.12+` dan npm
+- PHP `8.2+` dengan ekstensi `pdo_mysql`, `mbstring`, `openssl`, `tokenizer`, `xml`, dan `ctype`
+- Composer
+- MySQL `8.x`
 
-### Langkah
+### 1. Siapkan database dan backend
 
-Dari root repository:
+Buat database MySQL, misalnya `ruangmagang`:
 
-```sh
-cd frontend
-npm ci
+```sql
+CREATE DATABASE ruangmagang CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+Lalu buat konfigurasi lokal dari contoh:
+
+```powershell
+Copy-Item backend\.env.example backend\.env
+```
+
+Isi `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` di `backend/.env` sesuai database MySQL milikmu. Jangan membagikan atau memasukkan `backend/.env` ke Git.
+
+Instal dependensi, buat kunci aplikasi dan secret JWT, lalu jalankan migrasi dari direktori backend:
+
+```powershell
+Set-Location backend
+composer install
+php artisan key:generate
+php artisan jwt:secret
+php artisan migrate
+php artisan serve
+```
+
+API berjalan di <http://localhost:8000> secara default (route berada di bawah prefix `/api`). Skema database dikelola melalui migration di `database/migrations/`.
+
+Untuk membuat akun demo, jalankan perintah ini dari `backend/` setelah konfigurasi `.env` siap:
+
+```powershell
+php artisan db:seed
+```
+
+Login demo: `rina.sari@campus.test` / `password`. Seeder hanya berjalan jika dipanggil secara eksplisit; kredensial ini khusus pengembangan lokal. Atur `SEED_USER_NAME`, `SEED_USER_EMAIL`, dan `SEED_USER_PASSWORD` di `.env` untuk menggantinya.
+
+### 2. Jalankan frontend
+
+Buka terminal kedua dari root repository:
+
+```powershell
+Set-Location frontend
+npm install
+Copy-Item .env.example .env
 npm run dev
 ```
 
-Buka URL yang dicetak Vite di terminal (biasanya <http://localhost:5173>). Untuk menghentikan server, tekan `Ctrl+C`.
+Buka URL Vite yang muncul di terminal (biasanya <http://localhost:5173>). Variabel `VITE_API_BASE_URL` pada `frontend/.env` dapat diarahkan ke base URL REST API lain (default: `http://localhost:8000/api`). Pastikan origin frontend terdaftar di `config/cors.php` pada backend.
 
-[//]: # ()
-[//]: # (Perintah frontend lainnya, jalankan dari direktori `frontend`:)
+## Fitur
 
-[//]: # ()
-[//]: # (```sh)
+- Registrasi dan login untuk mahasiswa maupun divisi kampus.
+- Pembuatan, pengeditan, dan penghapusan lowongan oleh divisi pemilik.
+- Pencarian lowongan dan pendaftaran mahasiswa, termasuk pembatalan selama status masih menunggu.
+- Dashboard divisi untuk mengelola lowongan, meninjau pendaftar, serta menerima atau menolak pendaftaran.
+- Dashboard mahasiswa untuk melacak status pendaftaran dan notifikasi.
+- Profil mahasiswa (NIM, jurusan, kontak, dan portofolio) serta profil divisi.
 
-[//]: # (npm run build       # type-check dan build untuk produksi)
+## Perintah pengembangan
 
-[//]: # (npm run test:unit   # jalankan unit test dengan Vitest)
+Dari `frontend/`:
 
-[//]: # (npm run preview     # sajikan hasil build secara lokal)
+```sh
+npm run dev
+npm run build       # type-check dan production build
+npm run test:unit   # unit test Vitest
+```
 
-[//]: # (```)
+Dari `backend/`:
 
-[//]: # ()
-[//]: # (## Menjalankan backend lokal &#40;opsional&#41;)
-
-[//]: # ()
-[//]: # (Backend saat ini berupa kerangka API Gin. Prasyaratnya adalah Go yang mendukung versi pada `backend/go.mod` &#40;Go `1.27`&#41; dan koneksi internet saat Go mengunduh modul untuk pertama kali.)
-
-[//]: # ()
-[//]: # (`backend/initializers/loadEnv.go` mewajibkan file `.env` ketika server dijalankan. Buat file kosong `backend/.env` jika belum ada. Dari root repository, misalnya di PowerShell:)
-
-[//]: # ()
-[//]: # (```powershell)
-
-[//]: # (New-Item -ItemType File -Path backend\.env)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (Kemudian jalankan backend dari direktori `backend`:)
-
-[//]: # ()
-[//]: # (```sh)
-
-[//]: # (cd backend)
-
-[//]: # (go run .)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (Server Gin mendengarkan di <http://localhost:8080> secara default. Variabel `PORT` yang mungkin ada di `.env` belum digunakan oleh server.)
-
-[//]: # ()
-[//]: # (Endpoint yang tersedia saat ini hanya contoh stub:)
-
-[//]: # ()
-[//]: # (| Method | Endpoint | Respons saat ini |)
-
-[//]: # (| --- | --- | --- |)
-
-[//]: # (| `GET` | `/api/login` | JSON dengan pesan `Login Success` |)
-
-[//]: # (| `POST` | `/api/register` | JSON dengan pesan `Register Success` |)
-
-[//]: # ()
-[//]: # (Endpoint tersebut belum memvalidasi kredensial atau menyimpan data. Konfigurasi CORS backend mengizinkan origin `http://localhost:5173` dan `http://localhost:8080`, tetapi frontend belum memanggil endpoint tersebut.)
-
+```sh
+php artisan migrate
+php artisan db:seed
+php artisan test
+```
 
 ## Struktur repository
 
-
 ```text
-
-├── backend/
-│   ├── controller/       # Handler endpoint Gin
-│   ├── initializers/     # Pemuatan konfigurasi
-│   ├── models/           # Model data Go
-│   ├── services/         # Lapisan service
-│   ├── main.go           # Setup server dan route API
-│   └── go.mod
-├── frontend/
-│   ├── src/
-│   │   ├── components/landing_pages/
-│   │   ├── router/
-│   │   └── views/
-│   ├── package.json
-│   └── vite.config.ts
-└── Pemaparan_Ide.md
-└── PRD_Sistem_Manajemen_Magang_Kampus.md
-└── README.md
-
+backend/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/  # HTTP controllers Laravel
+│   │   ├── Middleware/   # Validasi JWT dan otorisasi role
+│   │   ├── Requests/     # Form Request (validasi input)
+│   │   └── Resources/    # Transformasi respons JSON
+│   ├── Models/           # Model Eloquent
+│   ├── Repositories/     # Akses data MySQL
+│   └── Services/         # Aturan bisnis
+├── bootstrap/            # Bootstrap aplikasi dan registrasi middleware
+├── config/               # Konfigurasi (database, jwt, cors)
+├── database/
+│   ├── factories/
+│   ├── migrations/       # Skema database MySQL
+│   └── seeders/          # Seeder modular untuk model
+├── routes/
+│   └── api.php           # Registrasi REST routes
+├── tests/                # Feature & unit test
+└── .env.example
+frontend/
+├── src/
+│   ├── components/       # Komponen reusable dan landing page
+│   ├── router/           # Routes dan route guard
+│   ├── services/         # REST API client dan types
+│   ├── stores/           # State autentikasi Pinia
+│   └── views/            # Landing, autentikasi, lowongan, dashboard, profil
+└── .env.example
 ```
 
-[//]: # ()
-[//]: # (## Dokumen)
-
-[//]: # ()
-[//]: # (- [Product Requirements Document]&#40;PRD_Sistem_Manajemen_Magang_Kampus.md&#41; — tujuan, ruang lingkup, kebutuhan fitur, dan rancangan sistem.)
-
-[//]: # (- [Pemaparan Ide]&#40;Pemaparan_Ide.md&#41; — dokumen pemaparan ide produk.)
+Dokumen lengkap kebutuhan produk: [PRD Sistem Manajemen Magang Kampus](PRD_Sistem_Manajemen_Magang_Kampus.md).

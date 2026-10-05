@@ -5,7 +5,7 @@
 |---|---|
 | **Penulis** | Inas Tsabitah Dien (2510101005) |
 | **Mata Kuliah** | Rekayasa Perangkat Lunak - Semester 3 |
-| **Versi** | 1.0 |
+| **Versi** | 1.1 |
 | **Tanggal** | 17 September 2026 |
 | **Status** | Draft |
 
@@ -83,18 +83,19 @@ Mahasiswa aktif yang mencari pengalaman magang, membangun portofolio, atau memen
 
 | Layer | Teknologi | Keterangan |
 |---|---|---|
-| **Backend** | Go + Gin-Gonic | REST API, routing, middleware autentikasi |
+| **Backend** | Laravel (PHP 8.2+) | REST API, routing (`routes/api.php`), middleware autentikasi & role |
 | **Frontend** | Vue.js (3.x, Composition API disarankan) | SPA, konsumsi REST API |
-| **Database** | PostgreSQL / MySQL | Relasional, sesuai kebutuhan data persisten |
-| **ORM** | GORM | Interaksi Go ↔ database |
-| **Autentikasi** | JWT (JSON Web Token) | Session stateless, role-based access |
+| **Database** | MySQL 8.x | Relasional, sesuai kebutuhan data persisten |
+| **ORM** | Eloquent ORM | Interaksi Laravel ↔ database, skema dikelola lewat migration |
+| **Autentikasi** | JWT (JSON Web Token) via `php-open-source-saver/jwt-auth` | Session stateless, role-based access |
+| **Validasi (BE)** | Laravel Form Request | Validasi input pada setiap endpoint |
 | **HTTP Client (FE)** | Axios | Komunikasi FE ↔ BE |
 | **State Management (FE)** | Pinia | Manajemen state role & data user |
 | **Routing (FE)** | Vue Router | Termasuk route guard per role |
 | **Styling (FE)** | Tailwind CSS (opsional) | Mempercepat pengembangan UI |
 | **Deployment (opsional)** | Docker | Containerisasi BE & FE |
 
-**Arsitektur Umum:** Vue.js (SPA) ⇄ REST API (Gin-Gonic, JSON) ⇄ PostgreSQL/MySQL
+**Arsitektur Umum:** Vue.js (SPA) ⇄ REST API (Laravel, JSON) ⇄ MySQL
 
 ---
 
@@ -104,7 +105,7 @@ Mahasiswa aktif yang mencari pengalaman magang, membangun portofolio, atau memen
 - FR-1.1: Sistem dapat membedakan 2 role: `divisi` dan `mahasiswa`
 - FR-1.2: Registrasi akun dengan email, password, dan role
 - FR-1.3: Login menghasilkan JWT yang menyimpan `user_id` dan `role`
-- FR-1.4: Middleware Gin memvalidasi token & membatasi akses endpoint sesuai role
+- FR-1.4: Middleware Laravel memvalidasi token & membatasi akses endpoint sesuai role
 
 ### 7.2 Manajemen Lowongan Magang (Role: Divisi)
 - FR-2.1: Divisi dapat membuat lowongan baru (judul, deskripsi, kuantitas, durasi, requirement, deadline)
@@ -141,10 +142,10 @@ Mahasiswa aktif yang mencari pengalaman magang, membangun portofolio, atau memen
 | Kategori | Requirement |
 |---|---|
 | **Usability** | Aplikasi berbasis web dan responsif (mobile & desktop) |
-| **Persistensi Data** | Data tersimpan di database, tidak hilang saat refresh |
-| **Keamanan** | Password di-hash (bcrypt), endpoint dilindungi JWT & role-based middleware |
+| **Persistensi Data** | Data tersimpan di database MySQL, tidak hilang saat refresh |
+| **Keamanan** | Password di-hash (bcrypt via `Hash` facade Laravel), endpoint dilindungi JWT & role-based middleware |
 | **Performa** | Response API rata-rata < 1 detik untuk operasi standar (CRUD) |
-| **Maintainability** | Struktur kode backend mengikuti pola layer (handler-service-repository) |
+| **Maintainability** | Struktur kode backend mengikuti pola layer (controller-service-repository) |
 | **Ketersediaan** | Aplikasi dapat diakses melalui browser modern (Chrome, Firefox, Edge) |
 
 ---
@@ -161,8 +162,10 @@ Register/Login → Lengkapi Profil → Lihat Daftar Lowongan → Daftar ke Lowon
 
 ## 10. Model Data (Ringkas)
 
+Skema dibuat melalui Laravel migration pada MySQL (engine InnoDB, charset `utf8mb4`).
+
 **users**
-`id, nama, email, password_hash, role (divisi/mahasiswa), created_at`
+`id, nama, email (unique), password_hash, role (divisi/mahasiswa), created_at`
 
 **mahasiswa_profil**
 `id, user_id (FK), nim, jurusan, kontak, portofolio, created_at`
@@ -175,26 +178,29 @@ Register/Login → Lengkapi Profil → Lihat Daftar Lowongan → Daftar ke Lowon
 
 **pendaftaran**
 `id, lowongan_id (FK), mahasiswa_id (FK), status (pending/diterima/ditolak), created_at, updated_at`
+*(unique constraint pada `lowongan_id` + `mahasiswa_id` untuk mencegah pendaftaran ganda)*
 
 **notifikasi**
 `id, user_id (FK), pesan, is_read, created_at`
 
 ---
 
-## 11. Contoh Endpoint API (Gin-Gonic)
+## 11. Contoh Endpoint API (Laravel)
+
+Seluruh route didefinisikan di `routes/api.php` (prefix `/api`).
 
 | Method | Endpoint | Role | Deskripsi |
 |---|---|---|---|
 | POST | `/api/auth/register` | Public | Registrasi akun |
 | POST | `/api/auth/login` | Public | Login, mengembalikan JWT |
 | GET | `/api/lowongan` | Public/Mahasiswa | List lowongan aktif |
-| GET | `/api/lowongan/:id` | Public/Mahasiswa | Detail lowongan |
+| GET | `/api/lowongan/{id}` | Public/Mahasiswa | Detail lowongan |
 | POST | `/api/lowongan` | Divisi | Buat lowongan baru |
-| PUT | `/api/lowongan/:id` | Divisi | Edit lowongan |
-| DELETE | `/api/lowongan/:id` | Divisi | Hapus lowongan |
-| POST | `/api/lowongan/:id/daftar` | Mahasiswa | Daftar ke lowongan |
-| GET | `/api/lowongan/:id/pendaftar` | Divisi | Lihat daftar pendaftar |
-| PATCH | `/api/pendaftaran/:id/status` | Divisi | Update status pendaftar |
+| PUT | `/api/lowongan/{id}` | Divisi | Edit lowongan |
+| DELETE | `/api/lowongan/{id}` | Divisi | Hapus lowongan |
+| POST | `/api/lowongan/{id}/daftar` | Mahasiswa | Daftar ke lowongan |
+| GET | `/api/lowongan/{id}/pendaftar` | Divisi | Lihat daftar pendaftar |
+| PATCH | `/api/pendaftaran/{id}/status` | Divisi | Update status pendaftar |
 | GET | `/api/mahasiswa/pendaftaran` | Mahasiswa | Riwayat pendaftaran mahasiswa |
 | GET/PUT | `/api/profil` | Mahasiswa/Divisi | Lihat/edit profil |
 
