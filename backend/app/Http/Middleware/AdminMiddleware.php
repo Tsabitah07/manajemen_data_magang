@@ -16,12 +16,13 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->email === 'admin@campus.test') {
+        if (Auth::check() && Auth::user()->role === 'admin') {
             return $next($request);
-        } else {
-            return response()->json([
-                'message' => 'Unauthorized'
-            ], 401);
         }
+
+        return response()->json([
+            'status' => 'Unauthorized',
+            'message' => 'You are not authorized to access this resource.',
+        ], 403);
     }
 }
