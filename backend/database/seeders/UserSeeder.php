@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
                 'phone' => '081234567000',
                 'email' => 'admin@campus.test',
                 'password' => 'password',
+                'role' => 'admin',
             ],
             [
                 'id' => 'user-001',
@@ -28,6 +29,7 @@ class UserSeeder extends Seeder
                 'phone' => '081234567001',
                 'email' => 'rina.sari@campus.test',
                 'password' => 'password',
+                'role' => 'campus-unit',
             ],
             [
                 'id' => 'user-002',
@@ -35,6 +37,7 @@ class UserSeeder extends Seeder
                 'phone' => '081234567002',
                 'email' => 'dimas.pratama@campus.test',
                 'password' => 'password',
+                'role' => 'campus-unit',
             ],
             [
                 'id' => 'user-003',
@@ -42,6 +45,7 @@ class UserSeeder extends Seeder
                 'phone' => '081234567003',
                 'email' => 'ayu.lestari@campus.test',
                 'password' => 'password',
+                'role' => 'campus-unit',
             ],
             [
                 'id' => 'user-004',
@@ -49,6 +53,7 @@ class UserSeeder extends Seeder
                 'phone' => '081234567004',
                 'email' => 'fajar.nugroho@campus.test',
                 'password' => 'password',
+                'role' => 'campus-unit',
             ],
             [
                 'id' => 'user-005',
@@ -56,6 +61,7 @@ class UserSeeder extends Seeder
                 'phone' => '081234567005',
                 'email' => 'sita.ramadhani@campus.test',
                 'password' => 'password',
+                'role' => 'student',
             ],
         ];
 

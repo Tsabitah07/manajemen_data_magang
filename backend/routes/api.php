@@ -12,17 +12,13 @@ Route::get('/user', function (Request $request) {
 Route::group(['prefix' => 'auth'], function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/user', [AuthController::class, 'index']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/profile', [AuthController::class, 'profile'])->middleware('auth:sanctum');
-
-    Route::group(['prefix' => 'admin', 'middleware' => ['auth:sanctum', 'admin']], function () {
-        Route::get('/users', [AuthController::class, 'getAll']);
-        Route::get('/users/{id}', [AuthController::class, 'get']);
-    });
-
-    Route::group(['prefix' => 'campus-unit', 'middleware' => ['auth:sanctum', 'campus-unit']], function () {
-        Route::get('/users', [AuthController::class, 'getAll']);
-        Route::get('/users/{id}', [AuthController::class, 'get']);
+    Route::group(['middleware' => 'auth:sanctum'], function (){
+        Route::get('/profile', [AuthController::class, 'profile']);
+        Route::put('/update', [AuthController::class, 'update']);
+        Route::post('/logout', [AuthController::class, 'logout']);
     });
 });
 

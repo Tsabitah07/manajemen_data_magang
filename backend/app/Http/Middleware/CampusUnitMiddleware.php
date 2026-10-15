@@ -15,12 +15,13 @@ class CampusUnitMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check() && auth()->user()->campusUnit) {
+        if (auth()->check() && auth()->user()->role === 'campus-unit') {
             return $next($request);
-        } else {
-            return response()->json([
-                'message' => 'Unauthorized'
-            ], 401);
         }
+
+        return response()->json([
+            'status' => 'Unauthorized',
+            'message' => 'You are not authorized to access this resource.',
+        ], 403);
     }
 }

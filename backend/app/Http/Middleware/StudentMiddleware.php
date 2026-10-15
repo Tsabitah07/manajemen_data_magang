@@ -17,12 +17,13 @@ class  StudentMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(Auth::check() && Student::find(Auth::user()->id)) {
+        if (Auth::check() && Auth::user()->role === 'student') {
             return $next($request);
-        } else{
-            return response()->json([
-                'message' => 'Unauthorized'
-            ], 401);
         }
+
+        return response()->json([
+            'status' => 'Unauthorized',
+            'message' => 'You are not authorized to access this resource.',
+        ], 403);
     }
 }
