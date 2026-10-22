@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('documentation')->nullable();
 
             $table->string('campus_unit_id');
-            $table->foreign('campus_unit_id')->references('id')->on('campus_units');
+            $table->foreign('campus_unit_id')->references('id')->on('users');
 
             $table->boolean('is_open')->default(true);
 
