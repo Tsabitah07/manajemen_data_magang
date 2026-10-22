@@ -34,8 +34,7 @@ class AuthController extends Controller
                     'status' => 'User not found',
                 ], 404);
             }
-        }
-        else {
+        } else {
             return response()->json([
                 'status' => 'Unauthorized',
                 'message' => 'You are not authorized to access this resource.',
@@ -77,7 +76,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'User created successfully',
-            'data' => $user
+            'data' => $user,
         ], 201);
     }
 
@@ -140,7 +139,20 @@ class AuthController extends Controller
 
     public function profile()
     {
-        return response()->json(auth()->user());
+        $data = auth()->user();
+
+        if (Student::where('user_id', $data->id)->exists()) {
+            $data['detail_data'] = Student::where('user_id', $data->id);
+        } elseif (CampusUnit::where('user_id', $data->id)->exists()) {
+            $data['detail_data'] = CampusUnit::where('user_id', $data->id);
+        } else {
+            $data['detail_data'] = null;
+        }
+
+        return response()->json([
+            'message' => 'User successfully retrieve',
+            'data' => $data,
+        ]);
     }
 
     public function update(UpdateRequest $request)
@@ -154,7 +166,7 @@ class AuthController extends Controller
             $imageUrl = Storage::url($path);
         }
 
-        if ($request->query('id') && $user->role == 'admin'){
+        if ($request->query('id') && $user->role == 'admin') {
             $detail = User::find($request->query('id'));
 
             $detail->update([
@@ -168,7 +180,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'message' => 'User updated successfully',
-                'data' => $detail
+                'data' => $detail,
             ]);
         } else {
             $user->update([
@@ -182,7 +194,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'message' => 'User updated successfully',
-                'data' => $user
+                'data' => $user,
             ]);
         }
     }
