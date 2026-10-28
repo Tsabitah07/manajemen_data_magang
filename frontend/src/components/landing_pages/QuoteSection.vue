@@ -2,8 +2,8 @@
   <section id="cerita" class="quote-section">
     <div class="quote-mark">“</div>
     <blockquote>
-      Akhirnya aku bisa fokus nyiapin interview, bukan bingung cari tahu status pengajuan. Semuanya terasa
-      lebih jelas!
+      Akhirnya aku ga bingung cari tahu status pengajuan. Semuanya terasa
+      lebih jelas dan transparan!
     </blockquote>
     <div class="quote-author">
       <span class="author-avatar">D</span>

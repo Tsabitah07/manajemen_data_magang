@@ -4,9 +4,13 @@
       <span class="section-label">WAKTUNYA AMBIL LANGKAH PERTAMA</span>
       <h2>Pengalaman pertamamu<br />dimulai hari ini.</h2>
     </div>
-    <a class="button button-light" href="#alur">
+    <RouterLink class="button button-light" to="/lowongan">
       Yuk, mulai sekarang
       <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5" /></svg>
-    </a>
+    </RouterLink>
   </section>
 </template>
+
+<script setup lang="ts">
+import { RouterLink } from 'vue-router'
+</script>

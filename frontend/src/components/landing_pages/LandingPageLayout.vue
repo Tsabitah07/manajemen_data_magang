@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const menuOpen = ref(false)
+const auth = useAuthStore()
 
 const closeMenu = () => {
   menuOpen.value = false
@@ -11,7 +14,7 @@ const closeMenu = () => {
 <template>
   <div class="landing-page">
     <header class="site-header">
-      <a class="brand" href="#" aria-label="RuangMagang, beranda" @click="closeMenu">
+      <RouterLink class="brand" to="/" aria-label="RuangMagang, beranda" @click="closeMenu">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M4 8.5 12 4l8 4.5v7L12 20l-8-4.5v-7Z" />
@@ -19,7 +22,7 @@ const closeMenu = () => {
           </svg>
         </span>
         <span>ruang<span class="brand-accent">magang</span></span>
-      </a>
+      </RouterLink>
 
       <button
         class="menu-toggle"
@@ -37,8 +40,14 @@ const closeMenu = () => {
         <a href="#manfaat" @click="closeMenu">Manfaat</a>
         <a href="#alur" @click="closeMenu">Cara kerja</a>
         <a href="#cerita" @click="closeMenu">Cerita mereka</a>
-        <a class="nav-login" href="#mulai" @click="closeMenu">Masuk</a>
-        <a class="button button-small" href="#mulai" @click="closeMenu">Ajukan magang</a>
+        <template v-if="auth.user && auth.user.role !== 'admin'">
+          <RouterLink class="nav-login" to="/dashboard" @click="closeMenu">Dashboard</RouterLink>
+          <RouterLink class="nav-login" to="/profil" @click="closeMenu">Profil</RouterLink>
+        </template>
+        <RouterLink v-else-if="!auth.user" class="nav-login" to="/login" @click="closeMenu">Masuk</RouterLink>
+        <RouterLink class="button button-small" to="/lowongan" @click="closeMenu">
+          {{ auth.user?.role === 'campus-unit' ? 'Kelola magang' : 'Ajukan magang' }}
+        </RouterLink>
       </nav>
     </header>
 
@@ -47,10 +56,10 @@ const closeMenu = () => {
     </main>
 
     <footer class="site-footer">
-      <a class="brand footer-brand" href="#" aria-label="RuangMagang, kembali ke atas">
+      <RouterLink class="brand footer-brand" to="/" aria-label="RuangMagang, kembali ke atas">
         <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 8.5 12 4l8 4.5v7L12 20l-8-4.5v-7Z" /><path d="m8 10.5 4 2.2 4-2.2M12 13v4" /></svg></span>
         <span>ruang<span class="brand-accent">magang</span></span>
-      </a>
+      </RouterLink>
       <p>Tempat langkah pertama menuju karier impian.</p>
       <span class="copyright">© 2026 RuangMagang</span>
     </footer>
