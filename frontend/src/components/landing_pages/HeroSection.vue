@@ -8,12 +8,12 @@
         platform.
       </p>
       <div class="hero-actions">
-        <a class="button" href="#mulai">
+        <RouterLink class="button" to="/lowongan">
           Mulai pengajuan
           <svg viewBox="0 0 20 20" aria-hidden="true">
             <path d="M4 10h12m-5-5 5 5-5 5" />
           </svg>
-        </a>
+        </RouterLink>
         <a class="text-link" href="#alur">
           Lihat cara kerja <span aria-hidden="true">↓</span>
         </a>
@@ -81,3 +81,7 @@
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+import { RouterLink } from 'vue-router'
+</script>

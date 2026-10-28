@@ -14,7 +14,7 @@ import TrustSection from '@/components/landing_pages/TrustSection.vue'
     <TrustSection />
     <BenefitsSection />
     <StepsSection />
-<!--    <QuoteSection />-->
+    <QuoteSection />
     <CallToActionSection />
   </LandingPageLayout>
 </template>
