@@ -63,6 +63,38 @@ class UserSeeder extends Seeder
                 'password' => 'password',
                 'role' => 'student',
             ],
+            [
+                'id' => 'user-006',
+                'name' => 'Budi Santoso',
+                'phone' => '081234567006',
+                'email' => 'budi.santoso@campus.test',
+                'password' => 'password',
+                'role' => 'student',
+            ],
+            [
+                'id' => 'user-007',
+                'name' => 'Nadia Putri',
+                'phone' => '081234567007',
+                'email' => 'nadia.putri@campus.test',
+                'password' => 'password',
+                'role' => 'student',
+            ],
+            [
+                'id' => 'user-008',
+                'name' => 'Rizky Maulana',
+                'phone' => '081234567008',
+                'email' => 'rizky.maulana@campus.test',
+                'password' => 'password',
+                'role' => 'student',
+            ],
+            [
+                'id' => 'user-009',
+                'name' => 'Intan Permata',
+                'phone' => '081234567009',
+                'email' => 'intan.permata@campus.test',
+                'password' => 'password',
+                'role' => 'student',
+            ],
         ];
 
         foreach ($users as $userData) {
@@ -86,8 +118,7 @@ class UserSeeder extends Seeder
             );
         }
 
-        Student::firstOrCreate(
-            ['nim' => '20240001'],
+        $students = [
             [
                 'user_id' => 'user-005',
                 'gender' => 'female',
@@ -96,6 +127,45 @@ class UserSeeder extends Seeder
                 'status' => 'active',
                 'enrollment_year' => 2024,
             ],
-        );
+            [
+                'user_id' => 'user-006',
+                'gender' => 'male',
+                'nim' => '20230002',
+                'major' => 'Information Systems',
+                'status' => 'active',
+                'enrollment_year' => 2023,
+            ],
+            [
+                'user_id' => 'user-007',
+                'gender' => 'female',
+                'nim' => '20240003',
+                'major' => 'Computer Science',
+                'status' => 'active',
+                'enrollment_year' => 2024,
+            ],
+            [
+                'user_id' => 'user-008',
+                'gender' => 'male',
+                'nim' => '20220004',
+                'major' => 'Information Technology',
+                'status' => 'active',
+                'enrollment_year' => 2022,
+            ],
+            [
+                'user_id' => 'user-009',
+                'gender' => 'female',
+                'nim' => '20250005',
+                'major' => 'Informatics Engineering',
+                'status' => 'active',
+                'enrollment_year' => 2025,
+            ],
+        ];
+
+        foreach ($students as $studentData) {
+            Student::firstOrCreate(
+                ['nim' => $studentData['nim']],
+                $studentData,
+            );
+        }
     }
 }
