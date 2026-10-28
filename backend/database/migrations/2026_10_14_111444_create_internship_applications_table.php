@@ -20,14 +20,13 @@ return new class extends Migration
             $table->foreign('student_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->string('cv')->nullable();
-            $table->boolean('cv_required')->default(false);
 
             $table->enum('status', [
                 'waiting',
                 'accepted',
                 'rejected',
                 'cancelled',
-                'completed'
+                'completed',
             ])->default('waiting');
             $table->timestamps();
         });

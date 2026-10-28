@@ -24,6 +24,7 @@ return new class extends Migration
             $table->foreign('campus_unit_id')->references('id')->on('users');
 
             $table->boolean('is_open')->default(true);
+            $table->boolean('cv_required')->default(false);
 
             $table->timestamps();
         });

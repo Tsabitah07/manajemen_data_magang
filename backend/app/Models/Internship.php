@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Internship extends Model
 {
     protected $primaryKey = 'id';
+
     protected $keyType = 'string';
+
     public $incrementing = false;
 
     protected $fillable = [
@@ -19,7 +21,8 @@ class Internship extends Model
         'quota',
         'documentation',
         'campus_unit_id',
-        'status',
+        'is_open',
+        'cv_required',
     ];
 
     public function student()
@@ -29,7 +32,15 @@ class Internship extends Model
 
     public function campusUnit()
     {
-        return $this->belongsTo(CampusUnit::class);
+        return $this->belongsTo(User::class, 'campus_unit_id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'is_open' => 'boolean',
+            'cv_required' => 'boolean',
+        ];
     }
 
     public static function boot()

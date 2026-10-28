@@ -29,8 +29,8 @@ class storeRequest extends FormRequest
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'quota' => ['required', 'integer', 'min:1'],
             'documentation' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:2048'],
-            'campus_unit_id' => ['required', 'string', 'exists:campus_units,id'],
-            'status' => ['required', 'in:waiting,accepted,rejected,cancelled,completed']
+            'is_open' => ['sometimes', 'boolean'],
+            'cv_required' => ['sometimes', 'boolean'],
         ];
     }
 }
