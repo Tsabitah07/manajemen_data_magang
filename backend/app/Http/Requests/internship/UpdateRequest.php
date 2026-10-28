@@ -29,8 +29,8 @@ class UpdateRequest extends FormRequest
             'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
             'quota' => ['nullable', 'integer', 'min:1'],
             'documentation' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:2048'],
-            'campus_unit_id' => ['nullable', 'string', 'exists:campus_units,id'],
-            'status' => ['nullable', 'in:waiting,accepted,rejected,cancelled,completed']
+            'is_open' => ['sometimes', 'boolean'],
+            'cv_required' => ['sometimes', 'boolean'],
         ];
     }
 }

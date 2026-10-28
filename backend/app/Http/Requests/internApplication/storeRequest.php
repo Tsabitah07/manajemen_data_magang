@@ -24,10 +24,7 @@ class storeRequest extends FormRequest
     {
         return [
             'internship_id' => ['required', 'string', 'exists:internships,id'],
-            'student_id' => ['required', 'string', 'exists:students,id'],
             'cv' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:2048'],
-            'cv_required' => ['required', 'boolean'],
-            'status' => ['required', 'in:waiting,accepted,rejected,cancelled,completed'],
         ];
     }
 }
