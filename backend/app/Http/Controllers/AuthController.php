@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\auth\LoginRequest;
 use App\Http\Requests\auth\RegisterRequest;
 use App\Http\Requests\auth\UpdateRequest;
-use App\Models\CampusUnit;
-use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -34,8 +32,7 @@ class AuthController extends Controller
                     'status' => 'User not found',
                 ], 404);
             }
-        }
-        else {
+        } else {
             return response()->json([
                 'status' => 'Unauthorized',
                 'message' => 'You are not authorized to access this resource.',
@@ -72,12 +69,12 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'phone' => $request->phone,
             'profile_picture' => $imageUrl,
-            'role' => $request->role ?? 'student',
+            'role' => 'student',
         ]);
 
         return response()->json([
             'message' => 'User created successfully',
-            'data' => $user
+            'data' => $user,
         ], 201);
     }
 
@@ -105,7 +102,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'phone' => $request->phone,
             'profile_picture' => $imageUrl,
-            'role' => $request->role ?? 'student',
+            'role' => 'student',
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -140,12 +137,12 @@ class AuthController extends Controller
 
     public function profile()
     {
-        return response()->json(auth()->user());
+        return response()->json(auth()->user()->load(['studentProfile', 'campusUnitProfile']));
     }
 
     public function update(UpdateRequest $request)
     {
-        $request->validated();
+        $validated = $request->validated();
         $user = auth()->user();
 
         if ($request->hasFile('profile_picture')) {
@@ -154,37 +151,38 @@ class AuthController extends Controller
             $imageUrl = Storage::url($path);
         }
 
-        if ($request->query('id') && $user->role == 'admin'){
-            $detail = User::find($request->query('id'));
+        $user->update([
+            'name' => $validated['name'] ?? $user->name,
+            'phone' => $validated['phone'] ?? $user->phone,
+            'email' => $validated['email'] ?? $user->email,
+            'password' => $validated['password'] ?? $user->password,
+            'profile_picture' => $imageUrl ?? $user->profile_picture,
+        ]);
 
-            $detail->update([
-                'name' => $request->name ?? $detail->name,
-                'phone' => $request->phone ?? $detail->phone,
-                'email' => $request->email ?? $detail->email,
-                'password' => $request->password ?? $detail->password,
-                'profile_picture' => $imageUrl ?? $detail->profile_picture,
-                'role' => $request->role ?? $detail->role,
-            ]);
-
-            return response()->json([
-                'message' => 'User updated successfully',
-                'data' => $detail
-            ]);
-        } else {
-            $user->update([
-                'name' => $request->name ?? $user->name,
-                'phone' => $request->phone ?? $user->phone,
-                'email' => $request->email ?? $user->email,
-                'password' => $request->password ?? $user->password,
-                'profile_picture' => $imageUrl ?? $user->profile_picture,
-                'role' => $request->role ?? $user->role,
-            ]);
-
-            return response()->json([
-                'message' => 'User updated successfully',
-                'data' => $user
-            ]);
+        if ($user->role === 'student') {
+            $user->studentProfile()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'nim' => $validated['nim'],
+                    'major' => $validated['major'],
+                    'gender' => $validated['gender'] ?? null,
+                    'enrollment_year' => $validated['enrollment_year'] ?? null,
+                ],
+            );
+        } elseif ($user->role === 'campus-unit') {
+            $user->campusUnitProfile()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'unit_name' => $validated['unit_name'],
+                    'position' => $validated['position'],
+                ],
+            );
         }
+
+        return response()->json([
+            'message' => 'User updated successfully',
+            'data' => $user->load(['studentProfile', 'campusUnitProfile']),
+        ]);
     }
 
     public function logout()
