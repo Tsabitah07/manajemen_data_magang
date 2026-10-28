@@ -28,7 +28,7 @@ class RegisterRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
             'profile_picture' => ['nullable', 'image', 'max:2048'],
-            'role' => ['nullable', 'in:admin,campus-unit,student']
+            'role' => ['prohibited'],
         ];
     }
 }
