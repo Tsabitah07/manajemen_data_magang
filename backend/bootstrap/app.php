@@ -20,6 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'campus-unit' => CampusUnitMiddleware::class,
             'student' => StudentMiddleware::class,
         ]);
+
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
