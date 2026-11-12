@@ -2,8 +2,11 @@
 
 RuangMagang adalah platform manajemen magang internal kampus yang menghubungkan mahasiswa dengan divisi/organisasi kampus. Aplikasi menyediakan publikasi lowongan, pendaftaran, seleksi, profil pengguna, dashboard berdasarkan peran, serta notifikasi status.
 
+
 Link Website: https://manajemen-data-magang-f2ss.vercel.app/
+
 Link Backend: https://manajemen-data-magang.ethiodeploy.app/
+
 Video Demo: https://drive.google.com/file/d/13_WkM8jmEzFlLTuVaSpEPfpospi9f_T6/view?usp=sharing
 
 ## Teknologi
